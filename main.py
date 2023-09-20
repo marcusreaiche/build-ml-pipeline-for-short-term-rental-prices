@@ -93,12 +93,25 @@ def go(config: DictConfig):
 
             # NOTE: use the rf_config we just created as the rf_config parameter for the train_random_forest
             # step
+            run_path = os.path.join(root_path, "src", "train_random_forest")
+            # Shortener rf_config path by using relative path
+            rf_config_relpath_from_run_path = os.path.relpath(rf_config,
+                                                              start=run_path)
+            mlflow.run(
+                run_path,
+                "main",
+                parameters=dict(
+                    trainval_artifact="trainval_data.csv:latest",
+                    val_size=config['modeling']['val_size'],
+                    random_seed=config['modeling']['random_seed'],
+                    stratify_by=config['modeling']['stratify_by'],
+                    rf_config=rf_config_relpath_from_run_path,
+                    max_tfidf_features=config['modeling']['max_tfidf_features'],
+                    output_artifact='random_forest_export',
+                )
+            )
 
-            ##################
-            # Implement here #
-            ##################
 
-            pass
 
         if "test_regression_model" in active_steps:
 
