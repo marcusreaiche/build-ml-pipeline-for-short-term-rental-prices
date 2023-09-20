@@ -30,6 +30,11 @@ def go(args):
                     .copy())
         # Cast last_review col as datetime
         clean_df['last_review'] = pd.to_datetime(clean_df.last_review)
+        # Filter out by coordinates
+        clean_df = (clean_df
+                    .loc[clean_df.longitude.between(-74.25, -73.50) &
+                         clean_df.latitude.between(40.5, 41.2)]
+                    .copy())
         # Save clean_sample to disk
         clean_df.to_csv('clean_df.csv', index=False)
         # Log artifact to W&B
