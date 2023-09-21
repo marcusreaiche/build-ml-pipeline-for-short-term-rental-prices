@@ -57,6 +57,7 @@ def go(args):
     ######################################
     # Use run.use_artifact(...).file() to get the train and validation artifact (args.trainval_artifact)
     # and save the returned path in train_local_pat
+    logger.info(f'Download {args.trainval_artifact} artifact')
     trainval_local_path = run.use_artifact(args.trainval_artifact).file()
     ######################################
 
@@ -120,7 +121,11 @@ def go(args):
     # you just created to add the "random_forest_dir" directory to the artifact, and finally use
     # run.log_artifact to log the artifact to the run
     # YOUR CODE HERE
-    artifact = wandb.Artifact(name=args.output_artifact, type="model")
+    artifact = wandb.Artifact(
+        name=args.output_artifact,
+        type="model_export",
+        description="Exported random forest model",
+        metadata=rf_config)
     artifact.add_dir("random_forest_dir")
     run.log_artifact(artifact)
     artifact.wait()
@@ -170,7 +175,8 @@ def get_inference_pipeline(rf_config, max_tfidf_features):
     # NOTE: we do not need to impute room_type because the type of the room
     # is mandatory on the websites, so missing values are not possible in production
     # (nor during training). That is not true for neighbourhood_group
-    ordinal_categorical_preproc = OrdinalEncoder()
+    room_type_cat = ['Entire home/apt', 'Private room', 'Shared room']
+    ordinal_categorical_preproc = OrdinalEncoder(categories=[room_type_cat])
 
     ######################################
     # Build a pipeline with two steps:

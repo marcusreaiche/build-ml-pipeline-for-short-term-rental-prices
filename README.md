@@ -1,4 +1,23 @@
 # Build an ML Pipeline for Short-Term Rental Prices in NYC
+
+## Links
+
+- Public W&B project [nyc_aribnb](https://wandb.ai/marcusreaiche/nyc_airbnb?workspace=user-marcusreaiche)
+- Public Github [repo](https://github.com/marcusreaiche/build-ml-pipeline-for-short-term-rental-prices)
+
+## Discussion
+
+- Explore other regression models
+- Allow parallel execution of the pipeline
+   - Using hydra-joblib-launcher is not working
+      - I suspect the issue is related to running conditions since every process download and read the trainval data set located in the artifacts directory
+      - Using multiprocessing.Lock did not work
+   - Alternatively, it is possible to adapt the code to run in parallel without using hydra-joblib-launcher
+      - Parse parameters with comma separated values from the command line
+      - Use multiprocessing or concurrent.futures to fit the models in parallel
+
+## Introduction 
+
 You are working for a property management company renting rooms and properties for short periods of 
 time on various rental platforms. You need to estimate the typical price for a given property based 
 on the price of similar properties. Your company receives new data in bulk every week. The model needs 

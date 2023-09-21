@@ -5,12 +5,25 @@ main:
   project_name: nyc_airbnb
   experiment_name: development
   steps: all
+basic_cleaning:
+  input_artifact: "sample.csv:latest"
+  output_artifact: "clean_sample.csv"
+  output_type: "clean_sample"
+  output_description: "Data with outliers removed"
 etl:
   sample: "sample1.csv"
   min_price: 10 # dollars
   max_price: 350 # dollars
 data_check:
+  csv: "clean_sample.csv:latest"
+  ref: "clean_sample.csv:reference"
   kl_threshold: 0.2
+train_step:
+  trainval_artifact: "trainval_data.csv:latest"
+  output_artifact: "random_forest_export"
+test_step:
+  mlflow_model: "random_forest_export:prod"
+  test_dataset: "test_data.csv:latest"
 modeling:
   # Fraction of data to use for test (the remaining will be used for train and validation)
   test_size: 0.2
