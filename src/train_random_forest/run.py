@@ -175,7 +175,8 @@ def get_inference_pipeline(rf_config, max_tfidf_features):
     # NOTE: we do not need to impute room_type because the type of the room
     # is mandatory on the websites, so missing values are not possible in production
     # (nor during training). That is not true for neighbourhood_group
-    ordinal_categorical_preproc = OrdinalEncoder()
+    room_type_cat = ['Entire home/apt', 'Private room', 'Shared room']
+    ordinal_categorical_preproc = OrdinalEncoder(categories=[room_type_cat])
 
     ######################################
     # Build a pipeline with two steps:
