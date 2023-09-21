@@ -55,10 +55,10 @@ def go(config: DictConfig):
                 os.path.join(root_path, 'src', 'basic_cleaning'),
                 "main",
                 parameters={
-                    "input_artifact": "sample.csv:latest",
-                    "output_artifact": "clean_sample.csv",
-                    "output_type": "clean_sample",
-                    "output_description": "Data with outliers and null values removed",
+                    "input_artifact": config['basic_cleaning']['input_artifact'],
+                    "output_artifact": config['basic_cleaning']['output_artifact'],
+                    "output_type": config['basic_cleaning']['output_type'],
+                    "output_description": config['basic_cleaning']['output_description'],
                     "min_price": config['etl']['min_price'],
                     "max_price": config['etl']['max_price']})
 
@@ -67,8 +67,8 @@ def go(config: DictConfig):
                 os.path.join(root_path, "src", "data_check"),
                 "main",
                 parameters=dict(
-                    csv="clean_sample.csv:latest",
-                    ref="clean_sample.csv:reference",
+                    csv=config["data_check"]["csv"],
+                    ref=config["data_check"]["ref"],
                     kl_threshold=config["data_check"]["kl_threshold"],
                     min_price=config["etl"]["min_price"],
                     max_price=config["etl"]["max_price"]))
@@ -79,7 +79,7 @@ def go(config: DictConfig):
                 "main",
                 version="main",
                 parameters=dict(
-                    input="clean_sample.csv:latest",
+                    input=config["data_check"]["csv"],
                     test_size=config["modeling"]["test_size"],
                     random_seed=config["modeling"]["random_seed"],
                     stratify_by=config["modeling"]["stratify_by"]))
@@ -101,13 +101,13 @@ def go(config: DictConfig):
                 run_path,
                 "main",
                 parameters=dict(
-                    trainval_artifact="trainval_data.csv:latest",
+                    trainval_artifact=config["train_step"]["trainval_artifact"],
                     val_size=config['modeling']['val_size'],
                     random_seed=config['modeling']['random_seed'],
                     stratify_by=config['modeling']['stratify_by'],
                     rf_config=rf_config_relpath_from_run_path,
                     max_tfidf_features=config['modeling']['max_tfidf_features'],
-                    output_artifact='random_forest_export',
+                    output_artifact=config["train_step"]["output_artifact"],
                 )
             )
 
@@ -117,8 +117,8 @@ def go(config: DictConfig):
                 "main",
                 version="main",
                 parameters=dict(
-                    mlflow_model="random_forest_export:prod",
-                    test_dataset="test_data.csv:latest"))
+                    mlflow_model=config["test_step"]["mlflow_model"],
+                    test_dataset=config["test_step"]["test_dataset"]))
 
 
 if __name__ == "__main__":
